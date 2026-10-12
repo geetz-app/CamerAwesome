@@ -28,6 +28,7 @@ class AwesomeCameraPreview extends StatefulWidget {
   final EdgeInsets padding;
   final Alignment alignment;
   final PictureInPictureConfigBuilder? pictureInPictureConfigBuilder;
+  final ValueListenable<bool>? hideMainPreview;
 
   const AwesomeCameraPreview({
     super.key,
@@ -41,6 +42,7 @@ class AwesomeCameraPreview extends StatefulWidget {
     required this.padding,
     required this.alignment,
     this.pictureInPictureConfigBuilder,
+    this.hideMainPreview,
   });
 
   @override
@@ -196,9 +198,9 @@ class AwesomeCameraPreviewState extends State<AwesomeCameraPreview> {
                                 snapshot.data != AwesomeFilter.None
                             ? ColorFiltered(
                                 colorFilter: snapshot.data!.preview,
-                                child: _textures.first,
+                                child: _mainTexture(),
                               )
-                            : _textures.first;
+                            : _mainTexture();
                       },
                     ),
                   ),
@@ -225,6 +227,17 @@ class AwesomeCameraPreviewState extends State<AwesomeCameraPreview> {
           );
         },
       ),
+    );
+  }
+
+  Widget _mainTexture() {
+    final hidden = widget.hideMainPreview;
+    if (hidden == null) return _textures.first;
+    return ValueListenableBuilder<bool>(
+      valueListenable: hidden,
+      child: _textures.first,
+      builder: (_, isHidden, texture) =>
+          isHidden ? const SizedBox.expand() : texture!,
     );
   }
 

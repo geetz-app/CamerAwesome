@@ -137,6 +137,9 @@ data class CameraXState(
                     Preview.Builder().build()
                 }
 
+                preview.setSurfaceProvider(
+                    surfaceProvider(executor(activity), sensor.deviceId ?: index.toString())
+                )
                 useCaseGroupBuilder.addUseCase(preview)
                 previews!!.add(preview)
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
 import 'package:camerawesome/src/orchestrator/camera_context.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -106,6 +107,8 @@ class CameraAwesomeBuilder extends StatefulWidget {
 
   final PictureInPictureConfigBuilder? pictureInPictureConfigBuilder;
 
+  final ValueListenable<bool>? hideMainPreview;
+
   /// THe default filter to use when the camera is started.
   final AwesomeFilter? defaultFilter;
 
@@ -139,6 +142,7 @@ class CameraAwesomeBuilder extends StatefulWidget {
     required this.pictureInPictureConfigBuilder,
     this.availableFilters,
     this.onMediaCaptureEvent,
+    this.hideMainPreview,
   });
 
   /// Use the camera with the built-in interface.
@@ -239,6 +243,7 @@ class CameraAwesomeBuilder extends StatefulWidget {
     PictureInPictureConfigBuilder? pictureInPictureConfigBuilder,
     List<AwesomeFilter>? filters,
     OnMediaCaptureEvent? onMediaCaptureEvent,
+    ValueListenable<bool>? hideMainPreview,
   }) : this._(
           sensorConfig: sensorConfig ??
               SensorConfig.single(
@@ -247,6 +252,7 @@ class CameraAwesomeBuilder extends StatefulWidget {
           enablePhysicalButton: enablePhysicalButton,
           progressIndicator: progressIndicator,
           builder: builder,
+          hideMainPreview: hideMainPreview,
           saveConfig: saveConfig,
           onMediaTap: null,
           defaultFilter: filter,
@@ -494,6 +500,7 @@ class _CameraWidgetBuilder extends State<CameraAwesomeBuilder>
                         previewDecoratorBuilder: widget.previewDecoratorBuilder,
                         pictureInPictureConfigBuilder:
                             widget.pictureInPictureConfigBuilder,
+                        hideMainPreview: widget.hideMainPreview,
                       ),
               ),
             ],

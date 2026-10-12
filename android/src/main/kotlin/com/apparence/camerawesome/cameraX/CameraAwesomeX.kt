@@ -364,7 +364,7 @@ class CameraAwesomeX : CameraInterface, FlutterPlugin, ActivityAware {
                 val imageFile = File(entry.value!!)
                 imageFile.parentFile?.mkdirs()
                 // cameraState.imageCaptures must be in the same order as the sensors / paths lists
-                res[entry.key] = takePhotoWith(cameraState.imageCaptures[index], imageFile)
+                res[entry.key] = takePhotoWith(cameraState.imageCaptures[index], imageFile, entry.key)
             }
             callback(Result.success(res.all { it.value == true }))
         }
@@ -372,10 +372,10 @@ class CameraAwesomeX : CameraInterface, FlutterPlugin, ActivityAware {
 
     @SuppressLint("RestrictedApi")
     private suspend fun takePhotoWith(
-        imageCapture: ImageCapture, imageFile: File
+        imageCapture: ImageCapture, imageFile: File, sensor: PigeonSensor
     ): Boolean = suspendCancellableCoroutine { continuation ->
         val metadata = ImageCapture.Metadata()
-        if (cameraState.sensors.size == 1 && cameraState.sensors.first().position == PigeonSensorPosition.FRONT) {
+        if (sensor.position == PigeonSensorPosition.FRONT) {
             metadata.isReversedHorizontal = cameraState.mirrorFrontCamera
         }
         val outputFileOptions =
@@ -515,7 +515,7 @@ class CameraAwesomeX : CameraInterface, FlutterPlugin, ActivityAware {
                 videoCapture.targetRotation = orientationStreamListener!!.surfaceOrientation
                 cameraState.recordings!!.add(videoCapture.output.prepareRecording(
                     activity!!, FileOutputOptions.Builder(File(paths[index]!!)).build()
-                ).apply { if (cameraState.enableAudioRecording && !ignoreAudio) withAudioEnabled() }
+                ).apply { if (cameraState.enableAudioRecording && !ignoreAudio && index == 0) withAudioEnabled() }
                     .start(cameraState.executor(activity!!), recordingListener))
             }
             callback(Result.success(Unit))
